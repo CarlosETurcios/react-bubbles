@@ -56,7 +56,7 @@ const ColorList = ({ colors, updateColors }) => {
       .delete(`http://localhost:5000/api/colors/${color.id}`)
       .then(res => {
         console.log(res);
-        setEditing(colors.filter(item => item.id !== color.id));
+        updateColors(colors.filter(item => item.id !== color.id));
       })
 
       // make a delete request to delete this color
