@@ -14,37 +14,53 @@ const ColorList = ({ colors, updateColors }) => {
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
   console.log('ctee', colorToEdit);
+
   const editColor = color => {
     setEditing(true);
     setColorToEdit(color);
   };
-  useEffect(() => {
-    axios
-      .get(`http://localhost:5000/api/colors`, colorToEdit)
-      .then(res => {
-        console.log(res.data);
-        setColorToEdit(res.data);
-      })
-      .catch(err => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`http://localhost:5000/api/colors`, colorToEdit)
+  //     .then(res => {
+  //       console.log(res.data);
+  //       setColorToEdit(res.data);
+  //     })
+  //     .catch(err => console.log(err));
+  // }, []);
 
   const saveEdit = e => {
     e.preventDefault();
-    axios
-      .put(`http://localhost:5000/api/colors`, colorToEdit)
+    axiosWithAuth()
+      .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
       .then(res => {
         console.log('this is the res from list', res);
         setEditing(res.data);
+        axiosWithAuth()
+          .get(`http://localhost:5000/api/colors/`)
+          .then(res => {
+            updateColors(res.data);
+          })
+          .catch(err => console.log(err));
       })
       .catch(err => console.error(err));
-    updateColors.history.push('/');
+
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
   };
 
   const deleteColor = color => {
-    // make a delete request to delete this color
+    console.log('this is color', color);
+    axiosWithAuth()
+      .delete(`http://localhost:5000/api/colors/${color.id}`)
+      .then(res => {
+        console.log(res);
+        setEditing(colors.filter(item => item.id !== color.id));
+      })
+
+      // make a delete request to delete this color
+      .catch(err => console.log(err));
   };
 
   return (
